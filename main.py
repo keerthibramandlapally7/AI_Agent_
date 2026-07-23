@@ -1,11 +1,17 @@
 import os
 from dotenv import load_dotenv
-from pydantic_settings import BaseSettings
+from pydantic import BaseModel
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import PydanticOutputParser
 
 load_dotenv()
 
-llm = ChatGoogleGenerativeAI(model="gemini-flash-latest")
-response=llm.invoke("what is the meaning of life?")
-print(response)
+class ResearchResponse(BaseModel):
+    topic:str
+    summary:str
+    sources:list[str]
+    tools_used:list[str]
 
+llm = ChatGoogleGenerativeAI(model="gemini-flash-latest")
+parser=PydanticOutputParser(pydantic_object=ResearchResponse)
